@@ -1,5 +1,8 @@
 import { z } from "zod";
 import catchErrors from "../utils/catchErrors";
+import { createAccount } from "../services/auth.service";
+import { CREATED } from "../constants/https";
+import { setAuthCookies } from "../utils/cookies";
 
 const registerSchema = z.object({
     email: z.string().email().min(1).max(255),
@@ -7,7 +10,7 @@ const registerSchema = z.object({
     confirmPassword: z.string().min(6).max(255),
     userAgent: z.string().optional(),
 }).refine(
-    (data) => { data.password === data.confirmPassword },
+    (data) => data.password === data.confirmPassword,
     {
         message: `Passwords didn't match`,
         path: [`confirmPassword`]
@@ -24,6 +27,13 @@ export const registerHandler = catchErrors(
         });
 
         // call the service
+        const { User, accessToken, refreshToken } = await createAccount(request);
+
         // return the response
+        return (
+            setAuthCookies({res, accessToken, refreshToken})
+                .status(CREATED)
+                .json(User)
+        );
     }
 );
