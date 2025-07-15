@@ -8,6 +8,9 @@ import { errorHandler } from "./middlewares/errorHandler";
 import catchErrors from "./utils/catchErrors";
 import { OK } from "./constants/https";
 import authRoutes from "./routes/auth.route";
+import authenticate from "./middlewares/authenticate";
+import userRoutes from "./routes/user.route";
+import sessionRoutes from "./routes/session.routes";
 
 
 const app = express()
@@ -34,6 +37,11 @@ app.get('/', (req, res, next): void => {
 
 // auth routes like after checking the server health pointer comes here...
 app.use('/auth',authRoutes);
+
+// protected routes
+app.use("/user", authenticate, userRoutes);
+app.use("/sessions", authenticate, sessionRoutes);
+
 
 app.use(errorHandler);
 
