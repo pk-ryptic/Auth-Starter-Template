@@ -11,7 +11,7 @@ const authenticate: RequestHandler = (req, res, next) => {
     accessToken,
     UNAUTHORIZED,
     "Not authorized",
-    AppErrorCode.InvalidAccessToken
+    AppErrorCode.InvalidAccesToken
   );
 
   const { error, payload } = verifyToken(accessToken);
@@ -19,7 +19,7 @@ const authenticate: RequestHandler = (req, res, next) => {
     payload,
     UNAUTHORIZED,
     error === "jwt expired" ? "Token expired" : "Invalid token",
-    AppErrorCode.InvalidAccessToken
+    AppErrorCode.InvalidAccesToken
   );
 
   req.userId = payload.userId;
